@@ -1,0 +1,144 @@
+// 1. Setup: Define your generator and datasource
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// 2. Enums: Define fixed states for roles and order status
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+// 3. User Model: Handles authentication and profile
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Store the HASH, not the plain password
+  name      String?
+  role      Role     @default(USER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders    Order[]
+  favorites Favorite[]
+  reviews   Review[]
+}
+
+// 4. Product Model: The items you are selling
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Decimal  @db.Decimal(10, 2) // Precision for money
+  stock       Int      @default(0)
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  orderItems  OrderItem[]
+  favorites   Favorite[]
+  reviews     Review[]
+
+  @@index([name])
+  @@index([price])
+  @@index([categoryId])
+  @@index([createdAt])
+}
+
+// 5. Category Model: For organizing products (e.g., "Clothing", "Electronics")
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  slug     String    @unique // Good for SEO URLs: /shop/category/summer-sale
+  products Product[]
+}
+
+// 6. Order Model: The receipt
+model Order {
+  id              String      @id @default(uuid())
+  totalAmount     Decimal     @db.Decimal(10, 2)
+  status          OrderStatus @default(PENDING)
+  stripePaymentId String?     @unique // Link to Stripe transaction
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  user       User?       @relation(fields: [userId], references: [id])
+  userId     String?
+  orderItems OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+// 7. OrderItem Model: The pivot table (The most important table!)
+// This links an Order to a Product and records the snapshot of the purchase.
+model OrderItem {
+  id        String  @id @default(uuid())
+  quantity  Int
+  
+  // CRITICAL: We store the price at the moment of purchase.
+  // If the Product price changes later, this record remains historically accurate.
+  priceAtPurchase Decimal @db.Decimal(10, 2)
+
+  // Relations
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// 8. Favorite Model: Users can "heart" products
+model Favorite {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId]) // Prevent duplicates
+  @@index([userId]) // Optimize looking up favorites by user
+}
+
+// 9. Review Model: Customers can leave feedback
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int      @default(5) // 1-5 stars
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+
+  // A user can only review a product once
+  @@unique([userId, productId])
+  @@index([productId]) // Optimize looking up reviews for a product
+  @@index([rating])    // Optimize filtering by rating
+}
+
+  

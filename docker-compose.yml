@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: swiftshop_db
+    restart: always
+    environment:
+      POSTGRES_USER: swiftshop_user
+      POSTGRES_PASSWORD: securepassword123
+      POSTGRES_DB: swiftshop_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
