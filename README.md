@@ -33,6 +33,10 @@ SwiftShop is a full-featured, high-performance e-commerce platform built with th
 
 ### Admin Dashboard
 *   **Overview:** Real-time revenue charts and order statistics.
+*   **AI Error Analyst:** 
+    *   **System Health Dashboard:** Dedicated monitoring tab for system-wide errors.
+    *   **Automated Diagnostics:** Real-time error catching for Stripe payments and webhooks.
+    *   **AI Diagnosis:** Integrated with Groq (Llama 3) to provide instant explanations and suggested code fixes for every incident.
 *   **Product Management:** Create, update, and delete products.
 *   **Order Management:** View and update order statuses.
 *   **User Management:** Manage user roles and account status.
@@ -65,6 +69,9 @@ AUTH_SECRET="your-secret-key"
 STRIPE_SECRET_KEY="sk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
+
+# AI (Optional - for System Health Diagnosis)
+GROQ_API_KEY="gsk_..."
 
 # App
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
