@@ -16,6 +16,7 @@ test.describe('Authentication', () => {
     // 4. Verify Redirect (User is redirected to /profile usually, or home)
     // The auth config says redirect to /profile
     await expect(page.getByRole('heading', { name: 'My Profile' })).toBeVisible();
+    // await expect(page).toHaveURL(/\/profile/);
     
     // 5. Verify User Menu is visible
     const userMenuBtn = page.getByRole('button', { name: 'User menu' });
