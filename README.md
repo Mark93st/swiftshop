@@ -13,6 +13,7 @@ SwiftShop is a full-featured, high-performance e-commerce platform built with th
 *   **State Management:** [Zustand](https://github.com/pmndrs/zustand)
 *   **Payments:** [Stripe](https://stripe.com/)
 *   **Validation:** [Zod](https://zod.dev/)
+*   **Testing:** [Playwright](https://playwright.dev/)
 
 ## ✨ Key Features
 
@@ -98,6 +99,29 @@ To test the full checkout flow locally with Stripe:
 stripe listen --forward-to localhost:3000/api/webhook
 ```
 
+## 🧪 Testing
+
+SwiftShop includes a comprehensive suite of End-to-End (E2E) tests powered by Playwright to ensure reliability and prevent regressions.
+
+### Running Tests
+Ensure the development server is NOT running, as Playwright will manage the server lifecycle:
+```bash
+npx playwright test
+```
+
+To view the test report:
+```bash
+npx playwright show-report
+```
+
+### Test Coverage
+*   **Homepage:** Smoke tests for core layout and navigation.
+*   **Cart Management:** Adding items, updating quantities, and persistent state.
+*   **Product Discovery:** Search functionality, filtering logic, and sorting.
+*   **Authentication:** Login flow, session management, and protected routes.
+*   **Checkout Flow:** Interception and verification of the Stripe checkout initialization.
+*   **Admin Security:** Role-based access control (RBAC) verification for dashboard access.
+
 ## 📂 Project Structure
 
 ```
@@ -109,9 +133,9 @@ stripe listen --forward-to localhost:3000/api/webhook
 │   ├── admin/            # Admin-specific components
 │   ├── ui/               # Shadcn UI primitives
 ├── lib/                  # Utility functions and configuration
-│   ├── actions.ts        # Server Actions
 │   ├── prisma.ts         # Database client
 │   ├── store.ts          # Zustand store
+├── tests/                # Playwright E2E tests
 ├── prisma/               # Database schema and seeds
 └── public/               # Static assets
 ```
@@ -121,6 +145,7 @@ stripe listen --forward-to localhost:3000/api/webhook
 *   **Optimizations:** Database indexing on frequently queried fields.
 *   **SEO:** Dynamic metadata generation for product pages.
 *   **Validation:** Server-side input validation using Zod schemas.
+*   **E2E Testing:** High-coverage automated testing for all critical paths.
 
 ## 📄 License
 This project is licensed under the MIT License.
