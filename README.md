@@ -1,36 +1,126 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SwiftShop - Modern E-commerce Application
 
-## Getting Started
+SwiftShop is a full-featured, high-performance e-commerce platform built with the latest web technologies. It provides a seamless shopping experience for users and a robust management dashboard for administrators.
 
-First, run the development server:
+## 🚀 Tech Stack
 
+*   **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+*   **Language:** [TypeScript](https://www.typescriptlang.org/)
+*   **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) & [Shadcn UI](https://ui.shadcn.com/)
+*   **Database:** [PostgreSQL](https://www.postgresql.org/)
+*   **ORM:** [Prisma](https://www.prisma.io/)
+*   **Authentication:** [Auth.js (NextAuth v5)](https://authjs.dev/)
+*   **State Management:** [Zustand](https://github.com/pmndrs/zustand)
+*   **Payments:** [Stripe](https://stripe.com/)
+*   **Validation:** [Zod](https://zod.dev/)
+
+## ✨ Key Features
+
+### User Experience
+*   **Responsive Design:** Mobile-first layout with a dedicated mobile filter drawer.
+*   **Product Discovery:**
+    *   Advanced search with debouncing.
+    *   Filtering by category and price range.
+    *   Sorting options (Price, Name, Date).
+*   **Shopping Cart:** Persistent client-side cart state using Zustand.
+*   **Checkout:** Secure payment processing via Stripe Checkout.
+*   **User Accounts:**
+    *   Registration & Login.
+    *   Order History & Tracking.
+    *   Favorites/Wishlist (with Optimistic UI for instant feedback).
+    *   Profile Management.
+
+### Admin Dashboard
+*   **Overview:** Real-time revenue charts and order statistics.
+*   **Product Management:** Create, update, and delete products.
+*   **Order Management:** View and update order statuses.
+*   **User Management:** Manage user roles and account status.
+
+## 🛠️ Getting Started
+
+Follow these steps to set up the project locally.
+
+### Prerequisites
+*   Node.js (v18+)
+*   Docker (for the local PostgreSQL database)
+*   Stripe Account (for payment testing)
+
+### 1. Clone the Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/swiftshop.git
+cd swiftshop
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Setup
+Create a `.env` file in the root directory:
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/swiftshop_db"
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Authentication (Generate a random string: openssl rand -base64 32)
+AUTH_SECRET="your-secret-key"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Stripe
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 
-## Learn More
+# App
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Database Setup
+Start the PostgreSQL container:
+```bash
+docker-compose up -d
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Run migrations to set up the schema:
+```bash
+npx prisma migrate dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Seed the database with initial products:
+```bash
+npx prisma db seed
+```
 
-## Deploy on Vercel
+### 4. Run the Application
+Start the development server:
+```bash
+npm run dev
+```
+Visit `http://localhost:3000` to see the app.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 5. Webhook Testing (Optional)
+To test the full checkout flow locally with Stripe:
+```bash
+stripe listen --forward-to localhost:3000/api/webhook
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📂 Project Structure
+
+```
+├── app/                  # Next.js App Router pages and layouts
+│   ├── admin/            # Admin dashboard routes
+│   ├── api/              # API routes (Webhooks, Auth, Checkout)
+│   ├── (shop)/           # Storefront routes
+├── components/           # Reusable React components
+│   ├── admin/            # Admin-specific components
+│   ├── ui/               # Shadcn UI primitives
+├── lib/                  # Utility functions and configuration
+│   ├── actions.ts        # Server Actions
+│   ├── prisma.ts         # Database client
+│   ├── store.ts          # Zustand store
+├── prisma/               # Database schema and seeds
+└── public/               # Static assets
+```
+
+## 🔒 Security & Performance
+*   **Type Safety:** Strict TypeScript usage throughout the codebase.
+*   **Optimizations:** Database indexing on frequently queried fields.
+*   **SEO:** Dynamic metadata generation for product pages.
+*   **Validation:** Server-side input validation using Zod schemas.
+
+## 📄 License
+This project is licensed under the MIT License.
