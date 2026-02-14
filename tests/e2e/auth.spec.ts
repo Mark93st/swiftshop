@@ -21,18 +21,13 @@ test.describe('Authentication', () => {
     const userMenuBtn = page.getByRole('button', { name: 'User menu' });
     await expect(userMenuBtn).toBeVisible();
 
-    // 6. Test Logout
+    // 6. Test Logout (Commented out due to dev mode crash/race condition)
     // await userMenuBtn.click();
     // await page.getByRole('button', { name: 'Sign Out' }).click();
     
-    // Force navigation to home to verify session state (and bypass potential dev-mode redirect errors)
-    // We keep the goto('/') as a safety net, but ideally the redirect happens automatically now.
-    // Let's rely on the natural redirect first.
-    // await page.goto('/'); 
-    
-    // 7. Verify Logout
-    // Should see "Login" button in nav again
-    // await expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
+    // // 7. Verify Logout
+    // // Should see "Login" button in nav again
+    // // await expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
   });
 
   test('should protect private routes', async ({ page }) => {
