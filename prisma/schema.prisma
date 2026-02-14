@@ -141,4 +141,18 @@ model Review {
   @@index([rating])    // Optimize filtering by rating
 }
 
+model SystemError {
+  id          String   @id @default(uuid())
+  message     String
+  stack       String?  @db.Text
+  source      String?  // e.g., "STRIPE_WEBHOOK", "CHECKOUT_API"
+  diagnosis   String?  @db.Text
+  suggestedFix String? @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([source])
+}
+
   

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import 'dotenv/config';
 
 const envSchema = z.object({
   // Database
@@ -10,6 +11,9 @@ const envSchema = z.object({
 
   // NextAuth
   AUTH_SECRET: z.string().min(1).optional(), // Usually handled by NextAuth but good to have
+
+  // AI
+  GROQ_API_KEY: z.string().min(1).optional(),
 
   // App
   NEXT_PUBLIC_APP_URL: z.string().url().default('http://localhost:3000'),

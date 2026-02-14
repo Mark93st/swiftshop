@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import Stripe from 'stripe';
 import { env } from '@/lib/env';
+import { logError } from '@/lib/logger';
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
     }
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (error: any) {
+    await logError(error, 'STRIPE_WEBHOOK_SIGNATURE');
     console.error(`Webhook signature verification failed.`, error.message);
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
   }
@@ -111,6 +113,7 @@ export async function POST(req: Request) {
       });
 
     } catch (error) {
+      await logError(error, 'STRIPE_WEBHOOK_PROCESSING');
       console.error('❌ Error creating order in webhook:', error);
       return new NextResponse('Internal Server Error', { status: 500 });
     }

@@ -27,7 +27,7 @@ export const CategoryFormSchema = z.object({
 
 export type User = {
   id: string;
-  name: string;
+  name: string | null;
   email: string;
   password?: string;
   isActive?: boolean;

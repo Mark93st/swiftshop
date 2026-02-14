@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { env } from '@/lib/env';
 import { CartItem } from '@/lib/definitions';
+import { logError } from '@/lib/logger';
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
@@ -63,6 +64,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: stripeSession.url });
   } catch (error) {
+    await logError(error, 'CHECKOUT_API');
     console.error('[STRIPE_ERROR]', error);
     const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json({ error: message }, { status: 500 });

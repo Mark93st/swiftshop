@@ -8,7 +8,8 @@ import {
   Users, 
   Layers,
   ArrowLeft,
-  Menu
+  Menu,
+  Activity
 } from "lucide-react";
 import {
   Sheet,
@@ -38,6 +39,7 @@ export default async function AdminLayout({
     { label: "Categories", href: "/admin/categories", icon: Layers },
     { label: "Orders", href: "/admin/orders", icon: ShoppingBag },
     { label: "Users", href: "/admin/users", icon: Users },
+    { label: "System Health", href: "/admin/health", icon: Activity },
   ];
 
   return (
