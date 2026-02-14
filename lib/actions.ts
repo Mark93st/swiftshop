@@ -205,7 +205,8 @@ export async function upsertProduct(
 }
 
 export async function handleSignOut() {
-  await signOut({ redirectTo: '/' });
+  await signOut({ redirect: false });
+  redirect('/');
 }
 
 export async function toggleFavorite(productId: string) {
