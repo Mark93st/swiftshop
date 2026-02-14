@@ -247,7 +247,7 @@ export async function authenticate(
   formData: FormData,
 ) {
   try {
-    await signIn('credentials', formData, { redirectTo: '/profile' });
+    await signIn('credentials', formData, { redirect: false });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -259,6 +259,8 @@ export async function authenticate(
     }
     throw error;
   }
+  
+  redirect('/profile');
 }
 
 export type RegisterState = {
