@@ -14,7 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { handleSignOut } from '@/lib/actions';
+import { signOut } from 'next-auth/react';
 import { useDebounce } from '@/hooks/use-debounce';
 import { UserMenu } from './UserMenu';
 
@@ -175,11 +175,13 @@ export function NavbarClient({ user }: NavbarClientProps) {
                        <Link href="/orders" className="text-lg font-medium hover:text-primary transition-colors border-b pb-2 flex items-center gap-2">
                          <Package className="h-5 w-5" /> Orders
                        </Link>
-                       <form action={handleSignOut} className="mt-4">
-                         <Button variant="destructive" className="w-full justify-start gap-2">
-                           <LogOut className="h-5 w-5" /> Sign Out
-                         </Button>
-                       </form>
+                       <Button 
+                         variant="destructive" 
+                         className="w-full justify-start gap-2 mt-4"
+                         onClick={() => signOut({ callbackUrl: '/' })}
+                       >
+                         <LogOut className="h-5 w-5" /> Sign Out
+                       </Button>
                      </>
                    )}
                  </nav>

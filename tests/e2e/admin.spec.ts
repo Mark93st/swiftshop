@@ -8,7 +8,13 @@ test.describe('Admin Security', () => {
     await page.getByLabel('Password').fill('adminpassword123');
     await page.getByRole('button', { name: 'Login' }).click();
     
-    // 2. Verify Admin Access (Admins are redirected directly to dashboard)
+    // Wait for the default redirection to /profile to ensure login is complete
+    await expect(page).toHaveURL(/\/profile/);
+    
+    // 2. Navigate to Admin
+    await page.goto('/admin');
+
+    // 3. Verify Admin Access
     await expect(page.getByRole('heading', { name: 'Dashboard Overview' })).toBeVisible();
     await expect(page.getByText('Total Revenue')).toBeVisible();
   });

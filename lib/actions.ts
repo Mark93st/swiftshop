@@ -204,10 +204,6 @@ export async function upsertProduct(
   redirect('/admin/products');
 }
 
-export async function handleSignOut() {
-  await signOut({ redirect: false });
-}
-
 export async function toggleFavorite(productId: string) {
   const session = await auth();
   const userId = session?.user?.id;
@@ -238,25 +234,6 @@ export async function toggleFavorite(productId: string) {
       }
     });
     return { favorited: true };
-  }
-}
-
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData,
-) {
-  try {
-    await signIn('credentials', formData, { redirect: false });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
   }
 }
 

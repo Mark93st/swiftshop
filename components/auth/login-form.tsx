@@ -1,17 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { authenticate } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 export default function LoginForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
-  const router = useRouter();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -19,16 +17,23 @@ export default function LoginForm() {
     setErrorMessage(null);
 
     const formData = new FormData(event.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
     
     try {
-      const result = await authenticate(undefined, formData);
-      if (result) {
-        setErrorMessage(result);
+      // Using client-side signIn for better stability and URL control
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false, 
+      });
+
+      if (result?.error) {
+        setErrorMessage('Invalid credentials.');
         setIsPending(false);
       } else {
-        // Success: Redirect manually to profile
-        router.push('/profile');
-        router.refresh(); // Ensure session state is updated
+        // Hard redirect to ensure the URL bar updates and state is fully refreshed
+        window.location.href = '/profile';
       }
     } catch (error) {
       setErrorMessage('Something went wrong.');
@@ -48,7 +53,7 @@ export default function LoginForm() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+              <label htmlFor="email" className="text-sm font-medium leading-none">Email</label>
               <Input
                 id="email"
                 type="email"
@@ -58,9 +63,7 @@ export default function LoginForm() {
               />
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                 <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Password</label>
-              </div>
+              <label htmlFor="password" className="text-sm font-medium leading-none">Password</label>
               <Input
                 id="password"
                 type="password"
@@ -69,11 +72,7 @@ export default function LoginForm() {
                 minLength={6}
               />
             </div>
-            <div
-              className="flex h-8 items-end space-x-1"
-              aria-live="polite"
-              aria-atomic="true"
-            >
+            <div className="min-h-[2rem]">
               {errorMessage && (
                 <p className="text-sm text-red-500 font-medium">
                   {errorMessage}

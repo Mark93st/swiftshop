@@ -11,8 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { handleSignOut } from '@/lib/actions';
-import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
 interface UserMenuProps {
   user: {
@@ -23,12 +22,9 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
-  const router = useRouter();
-
   const onSignOut = async () => {
-    await handleSignOut();
-    router.push('/');
-    router.refresh();
+    // Using client-side signOut to prevent Server Action redirect crashes
+    await signOut({ callbackUrl: '/' });
   };
 
   if (!user) {

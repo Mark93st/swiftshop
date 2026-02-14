@@ -13,22 +13,23 @@ test.describe('Authentication', () => {
     // 3. Submit
     await page.getByRole('button', { name: 'Login' }).click();
 
-    // 4. Verify Redirect (User is redirected to /profile usually, or home)
-    // The auth config says redirect to /profile
+    // 4. Verify Redirect (User is redirected to /profile)
     await expect(page.getByRole('heading', { name: 'My Profile' })).toBeVisible();
-    // await expect(page).toHaveURL(/\/profile/);
+    await expect(page).toHaveURL(/\/profile/);
     
     // 5. Verify User Menu is visible
     const userMenuBtn = page.getByRole('button', { name: 'User menu' });
     await expect(userMenuBtn).toBeVisible();
 
     // 6. Test Logout
-    // await userMenuBtn.click();
-    // await page.getByText('Sign Out').click();
+    await userMenuBtn.click();
+    // In our new client-side setup, the menu item is a clickable div with text
+    await page.getByText('Sign Out').click();
     
     // 7. Verify Logout
-    // Should see "Login" button in nav again
-    // await expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
+    // Navigation to home should happen automatically
+    await expect(page).toHaveURL('/');
+    await expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
   });
 
   test('should protect private routes', async ({ page }) => {
