@@ -206,7 +206,6 @@ export async function upsertProduct(
 
 export async function handleSignOut() {
   await signOut({ redirect: false });
-  redirect('/');
 }
 
 export async function toggleFavorite(productId: string) {
@@ -259,8 +258,6 @@ export async function authenticate(
     }
     throw error;
   }
-  
-  redirect('/profile');
 }
 
 export type RegisterState = {

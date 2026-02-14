@@ -1,14 +1,40 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useState } from 'react';
 import { authenticate } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function LoginForm() {
-  const [errorMessage, dispatch, isPending] = useActionState(authenticate, undefined);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsPending(true);
+    setErrorMessage(null);
+
+    const formData = new FormData(event.currentTarget);
+    
+    try {
+      const result = await authenticate(undefined, formData);
+      if (result) {
+        setErrorMessage(result);
+        setIsPending(false);
+      } else {
+        // Success: Redirect manually to profile
+        router.push('/profile');
+        router.refresh(); // Ensure session state is updated
+      }
+    } catch (error) {
+      setErrorMessage('Something went wrong.');
+      setIsPending(false);
+    }
+  }
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-slate-50 p-4">
@@ -20,7 +46,7 @@ export default function LoginForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={dispatch} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
               <Input

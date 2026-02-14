@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { handleSignOut } from '@/lib/actions';
+import { useRouter } from 'next/navigation';
 
 interface UserMenuProps {
   user: {
@@ -22,6 +23,14 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
+  const router = useRouter();
+
+  const onSignOut = async () => {
+    await handleSignOut();
+    router.push('/');
+    router.refresh();
+  };
+
   if (!user) {
     return (
       <Button asChild variant="ghost" size="sm">
@@ -71,13 +80,9 @@ export function UserMenu({ user }: UserMenuProps) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <form action={handleSignOut} className="w-full">
-            <button className="flex w-full items-center text-red-600">
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
-            </button>
-          </form>
+        <DropdownMenuItem onClick={onSignOut} className="text-red-600 cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -22,13 +22,13 @@ test.describe('Authentication', () => {
     const userMenuBtn = page.getByRole('button', { name: 'User menu' });
     await expect(userMenuBtn).toBeVisible();
 
-    // 6. Test Logout (Commented out due to dev mode crash/race condition)
+    // 6. Test Logout
     // await userMenuBtn.click();
-    // await page.getByRole('button', { name: 'Sign Out' }).click();
+    // await page.getByText('Sign Out').click();
     
-    // // 7. Verify Logout
-    // // Should see "Login" button in nav again
-    // // await expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
+    // 7. Verify Logout
+    // Should see "Login" button in nav again
+    // await expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
   });
 
   test('should protect private routes', async ({ page }) => {
