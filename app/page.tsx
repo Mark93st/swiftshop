@@ -97,7 +97,7 @@ export default async function Home() {
                        <item.icon className="h-8 w-8" />
                     </div>
                     <div>
-                       <h3 className="font-bold text-slate-900 text-lg">{item.title}</h3>
+                       <h2 className="font-bold text-slate-900 text-lg">{item.title}</h2>
                        <p className="text-sm text-slate-500 max-w-[200px] mx-auto">{item.desc}</p>
                     </div>
                   </div>
@@ -247,7 +247,7 @@ export default async function Home() {
                  </ul>
               </div>
            </div>
-           <div className="pt-12 border-t flex flex-col sm:flex-row justify-between items-center gap-6 text-xs text-slate-400 uppercase tracking-widest">
+           <div className="pt-12 border-t flex flex-col sm:flex-row justify-between items-center gap-6 text-xs text-slate-500 uppercase tracking-widest">
              <p>© 2026 SwiftShop Inc. All rights reserved.</p>
              <div className="flex gap-8">
                 <Link href="#" className="hover:text-slate-900 transition-colors">Instagram</Link>
