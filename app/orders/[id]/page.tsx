@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Printer, Truck, Calendar, CreditCard, Package, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default async function OrderDetailsPage({
   params,
@@ -81,11 +82,15 @@ export default async function OrderDetailsPage({
                     <li key={item.id} className="p-6 flex gap-4">
                       <div className="h-20 w-20 rounded-lg bg-slate-100 border overflow-hidden flex-shrink-0">
                         {item.product.imageUrl && (
-                          <img 
-                            src={item.product.imageUrl} 
-                            alt={item.product.name} 
-                            className="h-full w-full object-cover"
-                          />
+                          <div className="relative w-full h-full">
+                            <Image 
+                              src={item.product.imageUrl} 
+                              alt={item.product.name} 
+                              fill
+                              className="object-cover"
+                              sizes="80px"
+                            />
+                          </div>
                         )}
                       </div>
                       <div className="flex-1">

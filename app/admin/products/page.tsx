@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
 import { Pagination } from "@/components/Pagination";
+import Image from "next/image";
 
 export default async function AdminProductsPage({
   searchParams,
@@ -66,14 +67,22 @@ export default async function AdminProductsPage({
             <tbody className="divide-y">
               {products.map((product) => (
                 <tr key={product.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 max-w-[250px]">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded border bg-slate-100 overflow-hidden">
+                      <div className="h-10 w-10 flex-shrink-0 rounded border bg-slate-100 overflow-hidden relative">
                         {product.imageUrl && (
-                          <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
+                          <Image 
+                            src={product.imageUrl} 
+                            alt={product.name} 
+                            fill
+                            className="object-cover"
+                            sizes="40px"
+                          />
                         )}
                       </div>
-                      <span className="font-medium text-slate-900">{product.name}</span>
+                      <span className="font-medium text-slate-900 truncate block w-full" title={product.name}>
+                        {product.name}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">

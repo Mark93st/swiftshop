@@ -97,25 +97,51 @@ export async function POST(req: Request) {
           data: orderData
         });
 
-        // 2. Update stock for each product
+        // 2. Clear reserved stock for each product (stock was already decremented at checkout)
         for (const item of cartItems) {
           await tx.product.update({
             where: { id: item.id },
             data: {
-              stock: {
+              reservedStock: {
                 decrement: item.quantity
               }
             }
           });
         }
 
-        console.log('✅ Order created and stock updated! ID:', newOrder.id);
+        console.log('✅ Order created and reserved stock cleared! ID:', newOrder.id);
       });
 
     } catch (error) {
       await logError(error, 'STRIPE_WEBHOOK_PROCESSING');
       console.error('❌ Error creating order in webhook:', error);
       return new NextResponse('Internal Server Error', { status: 500 });
+    }
+  } else if (event.type === 'checkout.session.expired') {
+    const session = event.data.object as Stripe.Checkout.Session;
+    console.log('📦 Session expired, releasing reserved stock. Metadata:', session.metadata);
+    
+    const cartItemsJson = session.metadata?.cartItems;
+    if (cartItemsJson) {
+      const cartItems = JSON.parse(cartItemsJson) as { id: string; quantity: number }[];
+      try {
+        await prisma.$transaction(async (tx) => {
+          for (const item of cartItems) {
+            await tx.product.update({
+              where: { id: item.id },
+              data: {
+                stock: { increment: item.quantity },
+                reservedStock: { decrement: item.quantity }
+              }
+            });
+          }
+        });
+        console.log('✅ Released reserved stock for expired session:', session.id);
+      } catch (error) {
+        await logError(error, 'STRIPE_WEBHOOK_EXPIRED_ROLLBACK');
+        console.error('❌ Error releasing stock for expired session:', error);
+        return new NextResponse('Internal Server Error', { status: 500 });
+      }
     }
   }
 

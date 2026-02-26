@@ -152,7 +152,13 @@ export default function CartPage() {
                   {!isLoading && <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />}
                 </Button>
                 <div className="mt-6 flex items-center justify-center gap-2">
-                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-5 opacity-50 grayscale" />
+                   <Image 
+                     src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" 
+                     alt="Stripe" 
+                     width={50}
+                     height={20}
+                     className="opacity-50 grayscale object-contain" 
+                   />
                    <span className="text-xs text-slate-400">Secure Payment</span>
                 </div>
               </div>

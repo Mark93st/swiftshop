@@ -8,7 +8,7 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const role = (auth?.user as any)?.role;
+      const role = auth?.user?.role;
       const isAdmin = role === 'ADMIN';
       const isOnAdmin = nextUrl.pathname.startsWith('/admin');
       const isOnDashboard = nextUrl.pathname.startsWith('/profile') || nextUrl.pathname.startsWith('/orders');
@@ -31,16 +31,16 @@ export const authConfig = {
     },
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role;
-        console.log('🔑 JWT (Config) - user.role:', (user as any).role);
+        token.role = user.role;
+        console.log('🔑 JWT (Config) - user.role:', user.role);
       }
       return token;
     },
     async session({ session, token }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
-        (session.user as any).role = token.role;
-        console.log('👤 Session (Config) - role:', (session.user as any).role);
+        session.user.role = token.role;
+        console.log('👤 Session (Config) - role:', session.user.role);
       }
       return session;
     },

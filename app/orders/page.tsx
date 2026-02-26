@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Package, ExternalLink, Calendar, CreditCard, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function OrdersPage() {
   const session = await auth();
@@ -92,12 +93,14 @@ export default async function OrdersPage() {
                 <ul className="divide-y">
                   {order.orderItems.map((item) => (
                     <li key={item.id} className="p-4 flex items-center gap-4">
-                      <div className="h-16 w-16 rounded-md bg-slate-100 border overflow-hidden flex-shrink-0">
+                      <div className="h-16 w-16 rounded-md bg-slate-100 border overflow-hidden flex-shrink-0 relative">
                         {item.product.imageUrl && (
-                          <img 
+                          <Image 
                             src={item.product.imageUrl} 
                             alt={item.product.name} 
-                            className="h-full w-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="64px"
                           />
                         )}
                       </div>

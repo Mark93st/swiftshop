@@ -45,3 +45,25 @@ next-env.d.ts
 # Playwright
 /playwright-report
 /test-results
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Database
+*.db
+*.db-journal
+
+# Local Reports & Analytics
+/lighthouse reports/
+lighthouse-*.html
+
+# Environment variables
+# allow committing .env.example
+!.env.example
+!.env.template

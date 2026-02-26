@@ -18,22 +18,40 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing items' }, { status: 400 });
     }
 
-    // Validate Stock
+    // Validate Stock and reserve items using a transaction
     const productIds = items.map((item) => item.id);
-    const dbProducts = await prisma.product.findMany({
-      where: { id: { in: productIds } }
+    
+    const reservationResult = await prisma.$transaction(async (tx) => {
+      const dbProducts = await tx.product.findMany({
+        where: { id: { in: productIds } }
+      });
+
+      for (const item of items) {
+        const product = dbProducts.find((p) => p.id === item.id);
+        if (!product) {
+          throw new Error(`Product not found: ${item.name}`);
+        }
+        if (product.stock < item.quantity) {
+          throw new Error(`Sorry, ${item.name} is out of stock. Only ${product.stock} left.`);
+        }
+      }
+
+      for (const item of items) {
+        await tx.product.update({
+          where: { id: item.id },
+          data: {
+            stock: { decrement: item.quantity },
+            reservedStock: { increment: item.quantity }
+          }
+        });
+      }
+      return true;
+    }).catch(error => {
+      return { error: error.message };
     });
 
-    for (const item of items) {
-      const product = dbProducts.find((p) => p.id === item.id);
-      if (!product) {
-        return NextResponse.json({ error: `Product not found: ${item.name}` }, { status: 400 });
-      }
-      if (product.stock < item.quantity) {
-        return NextResponse.json({ 
-          error: `Sorry, ${item.name} is out of stock. Only ${product.stock} left.` 
-        }, { status: 400 });
-      }
+    if (typeof reservationResult === 'object' && reservationResult.error) {
+      return NextResponse.json({ error: reservationResult.error }, { status: 400 });
     }
 
     // Prepare line items for Stripe
@@ -50,17 +68,35 @@ export async function POST(req: Request) {
     }));
 
     // Create Stripe Checkout Session
-    const stripeSession = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items,
-      mode: 'payment',
-      success_url: `${env.NEXT_PUBLIC_APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${env.NEXT_PUBLIC_APP_URL}/cart`,
-      metadata: {
-        userId: userId || null,
-        cartItems: JSON.stringify(items.map((i) => ({ id: i.id, quantity: i.quantity }))),
-      },
-    });
+    let stripeSession;
+    try {
+      stripeSession = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items,
+        mode: 'payment',
+        expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // Expires in 30 minutes
+        success_url: `${env.NEXT_PUBLIC_APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${env.NEXT_PUBLIC_APP_URL}/cart`,
+        metadata: {
+          userId: userId || null,
+          cartItems: JSON.stringify(items.map((i) => ({ id: i.id, quantity: i.quantity }))),
+        },
+      });
+    } catch (stripeError) {
+      // If Stripe session creation fails, rollback the stock reservation
+      await prisma.$transaction(async (tx) => {
+        for (const item of items) {
+          await tx.product.update({
+            where: { id: item.id },
+            data: {
+              stock: { increment: item.quantity },
+              reservedStock: { decrement: item.quantity }
+            }
+          });
+        }
+      });
+      throw stripeError;
+    }
 
     return NextResponse.json({ url: stripeSession.url });
   } catch (error) {

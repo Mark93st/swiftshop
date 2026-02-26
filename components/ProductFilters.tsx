@@ -41,15 +41,16 @@ export function ProductFilters() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch]); // Only trigger when the debounced value actually changes
 
+  const urlQ = searchParams.get('q') || '';
+  const urlMin = searchParams.get('min') || '';
+  const urlMax = searchParams.get('max') || '';
+
   // Sync local state if URL changes externally (e.g. back button, navbar search)
   useEffect(() => {
-    const urlQ = searchParams.get('q') || '';
-    if (urlQ !== search) {
-      setSearch(urlQ);
-    }
-    setMinPrice(searchParams.get('min') || '');
-    setMaxPrice(searchParams.get('max') || '');
-  }, [searchParams]); // We purposefully exclude 'search' to avoid loops
+    setSearch(urlQ);
+    setMinPrice(urlMin);
+    setMaxPrice(urlMax);
+  }, [urlQ, urlMin, urlMax]);
 
   const updateFilters = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());

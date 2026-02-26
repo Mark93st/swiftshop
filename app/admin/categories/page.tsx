@@ -45,8 +45,8 @@ export default async function AdminCategoriesPage() {
           <tbody className="divide-y">
             {categories.map((cat) => (
               <tr key={cat.id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4 font-medium text-slate-900">{cat.name}</td>
-                <td className="px-6 py-4 text-sm font-mono text-slate-500">{cat.slug}</td>
+                <td className="px-6 py-4 font-medium text-slate-900 max-w-[200px] truncate" title={cat.name}>{cat.name}</td>
+                <td className="px-6 py-4 text-sm font-mono text-slate-500 max-w-[200px] truncate" title={cat.slug}>{cat.slug}</td>
                 <td className="px-6 py-4 text-center">
                   <Badge variant="secondary">{cat._count.products}</Badge>
                 </td>

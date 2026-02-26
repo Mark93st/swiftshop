@@ -67,16 +67,18 @@ export default async function AdminUsersPage({
             <tbody className="divide-y">
               {users.map((user) => (
                 <tr key={user.id} className={cn("hover:bg-slate-50 transition-colors", !user.isActive && "bg-slate-50/50 opacity-80")}>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 max-w-[200px]">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                      <div className="h-10 w-10 flex-shrink-0 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
                         <UserIcon className="h-5 w-5" />
                       </div>
-                      <div className="flex flex-col">
-                        <span className="font-medium text-slate-900">{user.name || "Anonymous"}</span>
-                        <span className="text-xs text-slate-500 flex items-center gap-1">
-                          <Mail className="h-3 w-3" />
-                          {user.email}
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-medium text-slate-900 truncate" title={user.name || "Anonymous"}>
+                          {user.name || "Anonymous"}
+                        </span>
+                        <span className="text-xs text-slate-500 flex items-center gap-1 truncate" title={user.email}>
+                          <Mail className="h-3 w-3 flex-shrink-0" />
+                          <span className="truncate">{user.email}</span>
                         </span>
                       </div>
                     </div>

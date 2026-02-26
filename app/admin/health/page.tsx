@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 
+import { AnalyseButton } from "./AnalyseButton";
+
 // This is a server component by default
 export default async function SystemHealthPage() {
   const errors = await prisma.systemError.findMany({
@@ -110,8 +112,8 @@ export default async function SystemHealthPage() {
                   "px-6 border-b hover:bg-slate-50/50 transition-colors",
                   index === errors.length - 1 && "border-0"
                 )}>
-                  <AccordionTrigger className="hover:no-underline py-6">
-                    <div className="flex flex-col md:flex-row md:items-center gap-4 text-left w-full">
+                  <AccordionTrigger className="hover:no-underline py-6 [&>div]:min-w-0">
+                    <div className="flex flex-col md:flex-row md:items-center gap-4 text-left w-full min-w-0">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <Badge variant="outline" className="bg-slate-100 font-mono text-[10px]">
@@ -122,7 +124,7 @@ export default async function SystemHealthPage() {
                             {new Date(error.createdAt).toLocaleString()}
                           </span>
                         </div>
-                        <h3 className="font-bold text-slate-900 truncate pr-4">
+                        <h3 className="font-bold text-slate-900 break-words whitespace-normal pr-4">
                           {error.message}
                         </h3>
                       </div>
@@ -144,7 +146,7 @@ export default async function SystemHealthPage() {
                             Stack Trace
                           </h4>
                           <div className="bg-slate-900 text-slate-300 p-4 rounded-xl text-xs font-mono overflow-x-auto max-h-[300px] leading-relaxed">
-                            <pre>{error.stack || 'No stack trace available for this error.'}</pre>
+                            <pre className="whitespace-pre-wrap break-words">{error.stack || 'No stack trace available for this error.'}</pre>
                           </div>
                         </div>
                       </div>
@@ -166,24 +168,25 @@ export default async function SystemHealthPage() {
                             <div className="space-y-6">
                               <div>
                                 <h5 className="text-sm font-bold text-yellow-900 mb-2">Explanation</h5>
-                                <p className="text-sm text-yellow-800 leading-relaxed">
+                                <p className="text-sm text-yellow-800 leading-relaxed whitespace-pre-wrap break-words">
                                   {error.diagnosis}
                                 </p>
                               </div>
                               {error.suggestedFix && (
                                 <div>
                                   <h5 className="text-sm font-bold text-yellow-900 mb-2">Suggested Fix</h5>
-                                  <div className="bg-white/60 p-4 rounded-lg border border-yellow-200 text-sm text-yellow-900 font-medium leading-relaxed">
+                                  <div className="bg-white/60 p-4 rounded-lg border border-yellow-200 text-sm text-yellow-900 font-medium leading-relaxed whitespace-pre-wrap break-words">
                                     {error.suggestedFix}
                                   </div>
                                 </div>
                               )}
                             </div>
                           ) : (
-                            <div className="flex flex-col items-center py-6 text-yellow-600/60 italic">
-                               <Search className="h-8 w-8 mb-2 animate-pulse" />
-                               <p className="text-sm">AI is analyzing this incident...</p>
-                            </div>
+                            <AnalyseButton 
+                              errorId={error.id} 
+                              message={error.message} 
+                              stack={error.stack} 
+                            />
                           )}
                         </div>
                       </div>
