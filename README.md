@@ -1,6 +1,6 @@
 # SwiftShop - Modern E-commerce Application
 
-SwiftShop is a full-featured, high-performance e-commerce platform built with the latest web technologies. It provides a seamless shopping experience for users and a robust management dashboard for administrators.
+SwiftShop is a full-featured, high-performance e-commerce platform built with the latest web technologies. It provides a seamless shopping experience for users and a robust management dashboard for administrators, featuring **AI-driven diagnostics** and **enterprise-grade security**.
 
 ## 🚀 Tech Stack
 
@@ -17,29 +17,29 @@ SwiftShop is a full-featured, high-performance e-commerce platform built with th
 
 ## ✨ Key Features
 
-### User Experience
-*   **Responsive Design:** Mobile-first layout with a dedicated mobile filter drawer.
-*   **Product Discovery:**
-    *   Advanced search with debouncing.
-    *   Filtering by category and price range.
-    *   Sorting options (Price, Name, Date).
-*   **Shopping Cart:** Persistent client-side cart state using Zustand.
-*   **Checkout:** Secure payment processing via Stripe Checkout.
-*   **User Accounts:**
-    *   Registration & Login.
-    *   Order History & Tracking.
-    *   Favorites/Wishlist (with Optimistic UI for instant feedback).
-    *   Profile Management.
+### 🔒 Enterprise-Grade Security
+*   **Server-Side Invalidation:** Secure session management with the Prisma Adapter.
+*   **Multi-Tab Synchronization:** Real-time logout broadcasting via the `BroadcastChannel API` ensures all open tabs are cleared instantly when a user signs out.
+*   **Cache Busting:** Strict HTTP `Cache-Control` headers prevent sensitive data from being leaked via the browser's "Back" button history.
+*   **Client-Side Wipe:** Automatic clearing of Zustand stores and `sessionStorage` on logout to protect user privacy on shared devices.
+*   **Secure Redirection:** Hardcoded safe redirection targets prevent open-redirect vulnerabilities.
 
-### Admin Dashboard
-*   **Overview:** Real-time revenue charts and order statistics.
-*   **AI Error Analyst:** 
-    *   **System Health Dashboard:** Dedicated monitoring tab for system-wide errors.
-    *   **Automated Diagnostics:** Real-time error catching for Stripe payments and webhooks.
-    *   **AI Diagnosis:** Integrated with Groq (Llama 3) to provide instant explanations and suggested code fixes for every incident.
-*   **Product Management:** Create, update, and delete products.
-*   **Order Management:** View and update order statuses.
-*   **User Management:** Manage user roles and account status.
+### 🇪🇺 GDPR & Privacy Compliance
+*   **Cookie Consent Banner:** A sleek, dark-themed banner for granular control over user privacy.
+*   **Conditional Analytics:** Google Analytics (GA4) only loads *after* user consent is granted, triggered by a custom event system.
+*   **Transparency:** A professional, GDPR-compliant Privacy and Cookie Policy live at `/privacy-policy`.
+
+### 🧠 AI-Powered Admin Specialist
+*   **System Health Dashboard:** Dedicated monitoring tab for system-wide health and error tracking.
+*   **AI Error Analyst:** Integrated with **Groq (Llama 3)** to provide real-time diagnosis, root-cause analysis, and suggested code fixes for system incidents (e.g., Stripe webhook failures).
+*   **Automated Diagnostics:** Real-time error catching and storage for every critical path.
+
+### 🛍️ User Experience
+*   **Responsive Design:** Mobile-first layout with a dedicated mobile filter drawer and UI-resilient headings for long category/user names.
+*   **Product Discovery:** Advanced search with debouncing, filtering by category/price, and multi-criteria sorting.
+*   **Shopping Cart:** Persistent client-side cart state using Zustand.
+*   **Checkout:** Secure payment processing via Stripe Checkout with real-time stock reservation.
+*   **User Accounts:** Full registration, order history, and a favorites wishlist with optimistic UI updates.
 
 ## 🛠️ Getting Started
 
@@ -70,7 +70,7 @@ STRIPE_SECRET_KEY="sk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 
-# AI (Optional - for System Health Diagnosis)
+# AI (For the System Health Specialist)
 GROQ_API_KEY="gsk_..."
 
 # App
@@ -100,12 +100,6 @@ npm run dev
 ```
 Visit `http://localhost:3000` to see the app.
 
-### 5. Webhook Testing (Optional)
-To test the full checkout flow locally with Stripe:
-```bash
-stripe listen --forward-to localhost:3000/api/webhook
-```
-
 ## 🧪 Testing
 
 SwiftShop includes a comprehensive suite of End-to-End (E2E) tests powered by Playwright to ensure reliability and prevent regressions.
@@ -116,33 +110,25 @@ Ensure the development server is NOT running, as Playwright will manage the serv
 npx playwright test
 ```
 
-To view the test report:
-```bash
-npx playwright show-report
-```
-
 ### Test Coverage
 *   **Homepage:** Smoke tests for core layout and navigation.
 *   **Cart Management:** Adding items, updating quantities, and persistent state.
 *   **Product Discovery:** Search functionality, filtering logic, and sorting.
 *   **Authentication:** Login flow, session management, and protected routes.
-*   **Checkout Flow:** Interception and verification of the Stripe checkout initialization.
-*   **Admin Security:** Role-based access control (RBAC) verification for dashboard access.
+*   **Security:** Verification of role-based access control (RBAC) and protected admin paths.
 
 ## 📂 Project Structure
 
 ```
 ├── app/                  # Next.js App Router pages and layouts
-│   ├── admin/            # Admin dashboard routes
+│   ├── admin/            # Admin dashboard & AI Health Specialist
 │   ├── api/              # API routes (Webhooks, Auth, Checkout)
-│   ├── (shop)/           # Storefront routes
+│   ├── products/         # Storefront product listings
 ├── components/           # Reusable React components
-│   ├── admin/            # Admin-specific components
 │   ├── ui/               # Shadcn UI primitives
+│   ├── CookieConsent.tsx # GDPR compliance component
 ├── lib/                  # Utility functions and configuration
-│   ├── prisma.ts         # Database client
 │   ├── store.ts          # Zustand store
-├── tests/                # Playwright E2E tests
 ├── prisma/               # Database schema and seeds
 └── public/               # Static assets
 ```
@@ -150,9 +136,9 @@ npx playwright show-report
 ## 🔒 Security & Performance
 *   **Type Safety:** Strict TypeScript usage throughout the codebase.
 *   **Optimizations:** Database indexing on frequently queried fields.
-*   **SEO:** Dynamic metadata generation for product pages.
+*   **SEO:** Dynamic metadata generation for product and category pages.
 *   **Validation:** Server-side input validation using Zod schemas.
-*   **E2E Testing:** High-coverage automated testing for all critical paths.
+*   **History Protection:** Middleware-driven Cache-Control for all sensitive paths.
 
 ## 📄 License
 This project is licensed under the MIT License.

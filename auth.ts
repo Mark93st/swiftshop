@@ -4,20 +4,15 @@ import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import type { User } from '@/lib/definitions'; // I might need to define this or use Prisma type
-
-async function getUser(email: string): Promise<User | undefined> {
-  try {
-    const user = await prisma.user.findUnique({ where: { email } });
-    return user || undefined;
-  } catch (error) {
-    console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
-  }
-}
+import { PrismaAdapter } from "@auth/prisma-adapter";
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
+  adapter: PrismaAdapter(prisma),
+  session: { 
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 1 day
+  },
   providers: [
     Credentials({
       async authorize(credentials) {
@@ -27,11 +22,11 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          const user = await getUser(email);
+          const user = await prisma.user.findUnique({ where: { email } });
+          
           if (!user || !user.password) return null;
 
           if (user.isActive === false) {
-            console.log('Account suspended:', email);
             throw new Error('Your account has been suspended. Please contact support.');
           }
           
@@ -39,7 +34,6 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           if (passwordsMatch) return user;
         }
 
-        console.log('Invalid credentials');
         return null;
       },
     }),

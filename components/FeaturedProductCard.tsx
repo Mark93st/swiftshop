@@ -69,11 +69,11 @@ export function FeaturedProductCard({
         </div>
       </Link>
       <CardHeader className="px-0 pb-2">
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors">
+        <div className="flex justify-between items-start gap-4">
+          <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2 break-words leading-tight flex-1">
             {name}
           </CardTitle>
-          <span className="font-bold text-lg">${price.toFixed(2)}</span>
+          <span className="font-bold text-lg shrink-0">${price.toFixed(2)}</span>
         </div>
       </CardHeader>
       <CardContent className="px-0 pb-4">

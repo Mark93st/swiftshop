@@ -12,18 +12,33 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { signOut } from 'next-auth/react';
+import { useCartStore } from '@/lib/store';
 
 interface UserMenuProps {
   user: {
     name?: string | null;
     email?: string | null;
     image?: string | null;
+    role?: string | null;
   } | undefined;
 }
 
 export function UserMenu({ user }: UserMenuProps) {
+  const clearCart = useCartStore((state) => state.clearCart);
+
   const onSignOut = async () => {
-    // Using client-side signOut to prevent Server Action redirect crashes
+    // 1. Clear Zustand store (updates localStorage: 'cart-storage')
+    clearCart();
+
+    // 2. Wipe sessionStorage
+    window.sessionStorage.clear();
+
+    // 3. Inform other tabs to logout
+    const authChannel = new BroadcastChannel('auth_sync');
+    authChannel.postMessage('logout');
+    authChannel.close();
+
+    // 4. NextAuth signOut handles clearing the auth cookie
     await signOut({ callbackUrl: '/' });
   };
 

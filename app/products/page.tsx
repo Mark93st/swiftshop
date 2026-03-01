@@ -156,8 +156,8 @@ export default async function ProductsPage({
           {/* Product Grid */}
           <div className="flex-1 min-w-0">
             <div className="hidden lg:flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-3xl font-bold text-slate-900 break-words leading-tight">
                   {searchQuery ? `Results for "${searchQuery}"` : 
                    categorySlug ? categories.find(c => c.slug === categorySlug)?.name : 
                    "All Products"}

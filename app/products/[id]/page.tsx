@@ -82,14 +82,16 @@ export default async function ProductDetailsPage({
           </div>
 
           {/* Product Info */}
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0">
             <div className="mb-6">
               {product.category && (
                 <Badge variant="secondary" className="mb-4">
                   {product.category.name}
                 </Badge>
               )}
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">{product.name}</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2 break-words leading-tight">
+                {product.name}
+              </h1>
               <p className="text-2xl font-bold text-primary">${Number(product.price).toFixed(2)}</p>
             </div>
 

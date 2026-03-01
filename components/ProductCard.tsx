@@ -64,8 +64,8 @@ export function ProductCard({ id, name, price, imageUrl, category, isFavorited =
       </div>
 
       <div className="p-4 flex flex-col flex-1">
-        <Link href={`/products/${id}`} className="hover:text-primary transition-colors">
-          <h3 className="text-lg font-bold text-slate-900 truncate">{name}</h3>
+        <Link href={`/products/${id}`} className="hover:text-primary transition-colors block min-w-0">
+          <h3 className="text-lg font-bold text-slate-900 line-clamp-2 break-words leading-tight h-[3.5rem]">{name}</h3>
         </Link>
         {category && <p className="text-sm text-slate-500 mb-2">{category}</p>}
         
