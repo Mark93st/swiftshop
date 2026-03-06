@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/lib/store';
 import { ShoppingCart, Plus, Minus } from 'lucide-react';
@@ -19,11 +19,19 @@ interface AddToCartButtonProps {
 
 export function AddToCartButton({ product }: AddToCartButtonProps) {
   const [quantity, setQuantity] = useState(1);
+  const [mounted, setMounted] = useState(false);
   const { addItem, items } = useCartStore();
 
-  // Check how many of this item are already in the cart
-  const cartItem = items.find((i) => i.id === product.id);
-  const itemsInCart = cartItem?.quantity || 0;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Default values for SSR before hydration
+  let itemsInCart = 0;
+  if (mounted) {
+    const cartItem = items.find((i) => i.id === product.id);
+    itemsInCart = cartItem?.quantity || 0;
+  }
   
   // Calculate true remaining stock
   const remainingStock = Math.max(0, product.stock - itemsInCart);
@@ -44,6 +52,30 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
     setQuantity(1); // Reset local quantity after adding
     toast.success(`Added ${quantity} ${product.name} to cart`);
   };
+
+  // Prevent flash of incorrect state during SSR by maintaining structure but hiding text/disabling interaction slightly
+  if (!mounted) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center border rounded-lg overflow-hidden">
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-none border-r" disabled>
+              <Minus className="h-4 w-4" />
+            </Button>
+            <span className="w-12 text-center font-medium">1</span>
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-none border-l" disabled>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+          <span className="text-sm font-medium text-muted-foreground opacity-0">Loading...</span>
+        </div>
+        <Button size="lg" className="w-full gap-2 h-12 text-base font-semibold" disabled>
+          <ShoppingCart className="h-5 w-5" />
+          Add to Cart
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
