@@ -2,23 +2,15 @@
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
 # testing
 /coverage
+/playwright-report
+/test-results
 
 # next.js
 /.next/
 /out/
-
-# production
-/build
 
 # misc
 .DS_Store
@@ -26,12 +18,11 @@
 
 # debug
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+!.env.example
+!.env.template
 
 # vercel
 .vercel
@@ -40,30 +31,15 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# prisma generated client
 /app/generated/prisma
-
-# Playwright
-/playwright-report
-/test-results
 
 # IDEs and Editors
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 *.sw?
-
-# Database
-*.db
-*.db-journal
 
 # Local Reports & Analytics
 /lighthouse reports/
 lighthouse-*.html
-
-# Environment variables
-# allow committing .env.example
-!.env.example
-!.env.template
+copilot-instructions.md
